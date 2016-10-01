@@ -1,0 +1,22 @@
+{
+  "name": "movie-reviews",
+  "description": "电影点评小站",
+  "main": "app.js",
+  "authors": [
+    "xiaopengguo <123445645@qq.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/xnye/movie-reviews",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}

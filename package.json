@@ -4,6 +4,7 @@
   "description": "电影点评小站",
   "main": "app.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "jade": "^1.11.0",
     "mongoose": "^4.6.1",
