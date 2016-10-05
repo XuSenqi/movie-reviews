@@ -4,16 +4,44 @@
   "description": "电影点评小站",
   "main": "app.js",
   "dependencies": {
+    "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.1",
     "express": "^4.14.0",
     "jade": "^1.11.0",
+    "moment": "^2.15.1",
     "mongoose": "^4.6.1",
-    "serve-static": "^1.11.1"
+    "serve-static": "^1.11.1",
+    "underscore": "^1.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-concurrent": "^2.3.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-less": "^1.4.0",
+    "grunt-contrib-nodemon": "^0.5.4",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-mocha-test": "^0.13.2",
+    "grunt-nodemon": "^0.4.2",
+    "mocha": "^3.1.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "xiaopengs",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xnye/movie-reviews.git"
+  },
+  "keywords": [
+    "movie"
+  ],
+  "bugs": {
+    "url": "https://github.com/xnye/movie-reviews/issues"
+  },
+  "homepage": "https://github.com/xnye/movie-reviews#readme"
 }

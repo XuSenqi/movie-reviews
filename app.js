@@ -4,6 +4,12 @@ var express = require('express');
 // 加载表单序列化模块
 var bodyParser = require('body-parser');
 
+var cookieParser = require('cookie-parser');
+
+var session = require('express-session');
+
+var mongoStore = require('connect-mongo')(session);
+
 //加载路径处理模块
 var path = require('path');
 
@@ -12,6 +18,9 @@ var mongoose = require('mongoose');
 
 //加载mongoDB数据模型集
 var Movie = require('./models/movie');
+
+//加载User数据集
+var User = require('./models/user');
 
 // 加载函数库
 // Underscor.js定义了一个下划线（_）对象，类似jquery的$
@@ -28,14 +37,28 @@ var port  = process.env.PORT || 3001;
 //创建服务应用实例
 var app = express();
 
+var dbUrl = 'mongodb://localhost:27017/imooc';
+
+//替换mongoose默认的promise为全局的promise
+mongoose.Promise = global.Promise;
 // 连接字符串格式为mongodb://主机名:端口/数据库名
-mongoose.connect('mongodb://localhost:27017/imooc');
+mongoose.connect(dbUrl);
 
 
 app.set('views','./views/pages');
+//设置默认的模板引擎
 app.set('view engine','jade');
 app.use(express.static(path.join(__dirname, 'public')))
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({
+	secret:'imooc',
+	store:new mongoStore({
+		url:dbUrl,
+		collection:'sessions'
+	})
+}))
 
 // 加载时间处理模块
 // app.locals对象字面量中定义的键值对，
@@ -51,11 +74,18 @@ app.locals.moment = require('moment');
 
 //设置index路由
 app.get('/',function(req,res){
-
+		console.log('user in session');
+		console.log(req.session.user);
+		var _user = req.session.user;
+		if(_user){
+			app.locals.user = _user;
+		}
+    //客服端发起请求服务器，取出movies所有的数据，此时movies是一个movie的数组集
 	Movie.fetch(function(err,movies){
 		if(err){
 			console.log(err)
 		}
+		// console.log(movies);
 		res.render('index',{
 			title:'首页',
 			movies:movies
@@ -64,10 +94,86 @@ app.get('/',function(req,res){
 	})
 })
 
+//signup 
+
+app.post('/user/signup',function(req,res){
+	var _user = req.body.user;
+
+	User.findOne({name:_user.name},function(err,user){
+		 if(err){ console.log(err); }
+
+		 if(user){ return res.redirect('/');}
+
+		 else{
+		 		var user = new User(_user);
+				user.save(function(err,user){
+					if(err){ console.log(err); }
+					res.redirect('/admin/userlist')
+				})
+		 }
+	})
+})
+
+//userlist page
+app.get('/admin/userlist',function(req,res){
+	User.fetch(function(err,users){
+		if(err){
+			console.log(err)
+		}
+		res.render('userlist',{
+			title:'用户列表页',
+			users:users
+	    })
+
+	})
+})
+
+//signin 
+app.post('/user/signin',function(req,res){
+	//先拿到提交的用户名和密码信息
+	var _user = req.body.user;
+	var name = _user.name;
+	var password = _user.password;
+
+	//去数据库查询用户名为name的数据，如果有就执行比对密码的方法
+	User.findOne({name:name},function(err,user){
+		if(err){
+			console.log(err);
+		}
+
+		//用户名不存在时，跳转到首页
+		if(!user){
+			return res.redirect('/');
+		}
+
+		//用户名存在，比对密码
+		user.comparePassword(password,function(err,isMatch){
+			if(err){ 
+				console.log(err);
+			}
+
+			if(isMatch){
+				req.session.user = user;
+				return res.redirect('/');
+			}
+			else{
+				console.log('Your password is not Match!');
+				return res.redirect('/');
+			}
+		})
+	})
+})
+
+
+app.get('/logout',function(req,res){
+	 delete req.session.user;
+	 delete app.locals.user;
+	 res.redirect('/');
+})
 // 加载detail page
 // 访问路径就是localhost :3000/movie/id
 app.get('/movie/:id',function(req,res){
-	console.log(req.params);
+	//当客服端访问某个id的movie时，触发服务器查询该id的movie
 	var id = req.params.id
 	Movie.findById(id,function(err,movie){
 		res.render('detail',{
@@ -100,6 +206,10 @@ app.get('/admin/update/:id',function(req,res){
 
 	if(id){
 		Movie.findById(id,function(err,movie){
+			if(err){
+				console.log(err);
+			}
+
 			res.render('admin',{
 				title:'Imooc 后台更新页面',
 				movie:movie
@@ -109,10 +219,11 @@ app.get('/admin/update/:id',function(req,res){
 })
 //admin post movie
 app.post('/admin/movie/new',function(req,res){
-	//尝试获取当前movie的id
+	//提交后尝试获取当前movie的id
 	var id = req.body.movie._id;
-	//获取当前movie的对象
+	//提交后获取当前movie的对象字面量
 	var movieObj = req.body.movie;
+	console.log(movieObj);
 	var _movie;
 	//如果id存在，执行更新操作
 	if(id !== 'undefined'){
