@@ -296,15 +296,5 @@ app.delete('/admin/list',function(req,res){
 	}
 })
 
-
-
-
-
-
-
-
-
-
-
 app.listen(port);
 console.log('app started on port ' + port);
