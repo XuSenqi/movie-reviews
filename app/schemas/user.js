@@ -9,6 +9,18 @@ var UserSchema = new mongoose.Schema({
 		type:String
 	},
 	password:String,
+	/** 
+	0: nomal user
+	1: verified user
+	2: professonal user
+	
+	>10:admin
+	>50:super admin
+	*/
+	role:{
+		type:Number,
+		default:0
+	},
 	meta:{
 		createAt:{
 			type:Date,
@@ -20,7 +32,7 @@ var UserSchema = new mongoose.Schema({
 		}
 	}
 
-})
+});
 
 UserSchema.pre('save',function(next){
 	var user = this;
@@ -32,18 +44,18 @@ UserSchema.pre('save',function(next){
 	}
 
 	bcrypt.genSalt(SALT_WORK_FACTOR,function(err,salt){
-		if(err) return next(err)
+		if(err) return next(err);
 
 		bcrypt.hash(user.password,salt,function(err,hash){
 
-			if(err) return next(err)
+			if(err) return next(err);
 
 			user.password = hash;
 		
 			next();
-		})
-	})
-})
+		});
+	});
+});
 
 //实例方法是什么？
 UserSchema.methods = {
@@ -53,11 +65,11 @@ UserSchema.methods = {
 			if(err) return cb(err);
 			console.log(_password);
 			console.log(this.password);
-      cb(null,isMatch)
+      cb(null,isMatch);
 
-		})
+		});
 	}
-}
+};
 
 //静态方法
 UserSchema.statics = {
@@ -66,14 +78,14 @@ UserSchema.statics = {
 		return this
 			.find({})
 			.sort('meta.updateAt')
-			.exec(cb)
+			.exec(cb);
 	},
 	//查询单条数据
 	findById:function(id,cb){
 		return this
 			.findOne({_id:id})
-			.exec(cb)
+			.exec(cb);
 	}
-}
+};
 
 module.exports = UserSchema;

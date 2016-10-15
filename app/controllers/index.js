@@ -9,11 +9,14 @@ exports.index = function(req,res){
         if(err){
             console.log(err);
         }
+        
         // console.log(movies);
         res.render('index',{
             title:'首页',
             movies:movies
         });
+
+         
 
     });
 };
