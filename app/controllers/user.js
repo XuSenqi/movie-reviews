@@ -1,12 +1,27 @@
 var User = require('../models/user');
 
+//showsignup
+exports.showSignup = function(req,res){
+	res.render('signup',{
+	title:'注册页面',
+});
+};
+
+//showsignin
+exports.showSignin = function(req,res){
+	res.render('signin',{
+	title:'登录页面',
+});
+};
+
+
 //signup 
 exports.signup = function(req,res){
     var _user = req.body.user;
     User.findOne({name:_user.name},function(err,user){
 		 if(err){ console.log(err); }
 		 if(user){ 
-             return res.redirect('/');
+             return res.redirect('/signin');
             }
 		 else{
 		 		user = new User(_user);
@@ -33,7 +48,7 @@ exports.signin = function(req,res){
 
 		//用户名不存在时，跳转到首页
 		if(!user){
-			return res.redirect('/');
+			return res.redirect('/signup');
 		}
 
 		//用户名存在，比对密码
@@ -48,7 +63,7 @@ exports.signin = function(req,res){
 			}
 			else{
 				console.log('Your password is not Match!');
-				return res.redirect('/');
+				return res.redirect('/signin');
 			}
 		});
 	});

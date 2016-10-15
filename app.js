@@ -31,7 +31,7 @@ mongoose.Promise = global.Promise;
 // 连接字符串格式为mongodb://主机名:端口/数据库名
 mongoose.connect(dbUrl);
 
-
+//设置视图文件夹
 app.set('views','./app/views/pages');
 //设置默认的模板引擎
 app.set('view engine','jade');

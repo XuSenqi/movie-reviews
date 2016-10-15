@@ -6,6 +6,7 @@ module.exports = function(app){
 //会话持久逻辑预处理
 app.use(function(req,res,next){
 	var _user = req.session.user;
+	console.log(_user+'----');
 	app.locals.user = _user;
 	next();
 });
@@ -16,6 +17,8 @@ app.get('/',Index.index);
 //User
 app.post('/user/signup',User.signup);
 app.post('/user/signin',User.signin);
+app.get('/signin',User.showSignin);
+app.get('/signup',User.showSignup);
 app.get('/logout',User.logout);
 app.get('/admin/userlist',User.list);
 

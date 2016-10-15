@@ -7,7 +7,7 @@ exports.detail = function(req,res){
 	var id = req.params.id;
 	Movie.findById(id,function(err,movie){
 		res.render('detail',{
-		title:'Imooc'+movie.title,
+		title:movie.title,
 		movie:movie
 		});
 	});
@@ -16,7 +16,7 @@ exports.detail = function(req,res){
 //admin new page
 exports.addnew = function(req,res){
     	res.render('admin',{
-		title:'后台录入页',
+		title:'录入一个新电影',
 		movie: {
 		title: '',
 		doctor: '',
@@ -42,7 +42,7 @@ exports.update = function(req,res){
 			}
 
 			res.render('admin',{
-				title:'Imooc 后台更新页面',
+				title:'更新电影信息',
 				movie:movie
 			});
 		});
@@ -105,7 +105,7 @@ exports.list = function(req,res){
 			console.log(err);
 		}
 		res.render('list',{
-			title:'imooc 列表页',
+			title:'电影列表',
 			movies:movies
 	    });
 
