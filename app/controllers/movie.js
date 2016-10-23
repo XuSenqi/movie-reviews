@@ -1,4 +1,5 @@
 var Movie = require('../models/movie');
+var Comment = require('../models/comment');
 var _ = require('underscore');
 
 //detail page
@@ -6,10 +7,18 @@ exports.detail = function(req,res){
 	//当客服端访问某个id的movie时，触发服务器查询该id的movie
 	var id = req.params.id;
 	Movie.findById(id,function(err,movie){
-		res.render('detail',{
-		title:movie.title,
-		movie:movie
-		});
+		//去Comment表里查询movie下所有的评论
+		Comment
+			.find({movie:id})
+			.populate('from','name')
+			.exec(function(err,comments){
+			console.log('++' + comments);
+			res.render('detail',{
+				title:movie.title,
+				movie:movie,
+				comments:comments
+			});
+		});	
 	});
 };
 

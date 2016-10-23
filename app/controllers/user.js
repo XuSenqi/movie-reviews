@@ -40,7 +40,7 @@ exports.signin = function(req,res){
 	var name = _user.name;
 	var password = _user.password;
 
-	//去数据库查询用户名为name的数据，如果有就执行比对密码的方法
+	//去users数据库查询用户名为name的数据，如果有就执行比对密码的方法
 	User.findOne({name:name},function(err,user){
 		if(err){
 			console.log(err);
@@ -51,7 +51,7 @@ exports.signin = function(req,res){
 			return res.redirect('/signup');
 		}
 
-		//用户名存在，比对密码
+		//用户名存在，执行比对密码的函数
 		user.comparePassword(password,function(err,isMatch){
 			if(err){ 
 				console.log(err);

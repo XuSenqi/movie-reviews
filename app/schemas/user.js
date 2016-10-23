@@ -63,9 +63,7 @@ UserSchema.methods = {
 		//var user = this;
 		bcrypt.compare(_password,this.password,function(err,isMatch){
 			if(err) return cb(err);
-			console.log(_password);
-			console.log(this.password);
-      cb(null,isMatch);
+     		cb(null,isMatch);
 
 		});
 	}
