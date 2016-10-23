@@ -27,7 +27,7 @@ exports.signup = function(req,res){
 		 		user = new User(_user);
 				user.save(function(err,user){
 					if(err){ console.log(err); }
-					res.redirect('/admin/userlist');
+					res.redirect('/admin/user/list');
 				});
 		 }
 	});

@@ -7,16 +7,16 @@ var CommentSchema = new mongoose.Schema({
 	movie:{type:ObjectId,ref:'Movie'},
 	//评论者
     from:{type:ObjectId,ref:'User'},
-	// reply:[{
-	// 	//评论者
-	// 	from:{type:ObjectId,ref:'User'},
-	// 	//被评论者
-	// 	to:{type:ObjectId,ref:'User'},
-	// 	//评论内容
-	// 	content:String	
-	// }],
+	reply:[{
+		//评论者
+		from:{type:ObjectId,ref:'User'},
+		//被评论者
+		to:{type:ObjectId,ref:'User'},
+		//评论内容
+		content:String	
+	}],
 	//被评论者
-	to:{type:ObjectId,ref:'User'},
+	//to:{type:ObjectId,ref:'User'},
     content:String,
 	meta:{
 		createAt:{
