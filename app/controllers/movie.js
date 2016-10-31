@@ -1,11 +1,13 @@
 var Movie = require('../models/movie');
 var Comment = require('../models/comment');
+var Category = require('../models/category')
 var _ = require('underscore');
 
 //detail page
 exports.detail = function(req,res){
 	//当客服端访问某个id的movie时，触发服务器查询该id的movie
 	var id = req.params.id;
+	  console.log(id);
 	Movie.findById(id,function(err,movie){
 		//去Comment表里查询movie下所有的评论
 		Comment
@@ -15,7 +17,7 @@ exports.detail = function(req,res){
 			.exec(function(err,comments){
 			console.log('++' + comments);
 			res.render('detail',{
-				title:movie.title,
+				title:'imooc 详情页',
 				movie:movie,
 				comments:comments
 			});
@@ -25,19 +27,12 @@ exports.detail = function(req,res){
 
 //admin new page
 exports.addnew = function(req,res){
-    	res.render('admin',{
-		title:'录入一个新电影',
-		movie: {
-		title: '',
-		doctor: '',
-		country: '',
-		year: '',
-		poster: '',
-		flash: '',
-		summary: '',
-		language: ''
-		}
-
+	Category.find({},function(err,categories){
+		res.render('admin',{
+			title:'录入一个新电影',
+			categories:categories,
+			movie: {}
+		});
 	});
 };
 
@@ -63,11 +58,12 @@ exports.update = function(req,res){
 exports.save = function(req,res){
 	//提交后尝试获取当前movie的id
 	var id = req.body.movie._id;
+	console.log(id)
 	//提交后获取当前movie的对象字面量
 	var movieObj = req.body.movie;
 	var _movie;
 	//如果id存在，执行更新操作
-	if(id !== 'undefined'){
+	if(id){
 		//查询某id的movie
 		Movie.findById(id,function(err,movie){
 			if(err){
@@ -87,23 +83,23 @@ exports.save = function(req,res){
 	}
 	//如果id不存在，执行新增方法
 	else{
-		_movie = new Movie({
-			doctor:movieObj.doctor,
-			title:movieObj.title,
-			country:movieObj.country,
-			language:movieObj.language,
-			year:movieObj.year,
-			poster:movieObj.poster,
-			summary:movieObj.summary,
-			flash:movieObj.flash
-		});
+		_movie = new Movie(movieObj);
+		var categoryId = _movie.category;
 
 		_movie.save(function(err,movie){
 			if(err){
 				console.log(err);
 			}
 			//保存成功后，跳转到更新的movie详情页
-			res.redirect('/movie/'+ movie._id);
+			Category.findById(categoryId,function(err,category){
+				console.log(category);
+				category.movies.push(movie._id)
+				category.save(function(err,category){
+				res.redirect('/movie/'+ movie._id);
+			})
+			})
+			
+		
 		});
 	}
 };

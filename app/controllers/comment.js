@@ -17,6 +17,7 @@ exports.save = function(req,res){
 
 			comment.save(function(err,comment){
 				if(err){
+					res.json({success:false});
 					console.log(err);
 				}
 				res.redirect('/movie/' + movieId);
@@ -29,9 +30,9 @@ exports.save = function(req,res){
 
 		comment.save(function(err,comment){
 			if(err){
+				//res.json({success:false});
 				console.log(err);
 			}
-
 			res.redirect('/movie/' + movieId);
 		});
 
